@@ -45,8 +45,8 @@ The goal of this project is to create a model capable of distinguishing between 
 ### Running the Project
 1. Clone the repository:
    ```bash
-   git clone https://github.com/<your-repo-name>.git
-   cd <your-repo-name>
+   git clone https://github.com/Aman1337g/cat-and-dog-classification.git
+   cd "cat-and-dog-classification"
    ```
 2. Open the Jupyter Notebook (`cat_v_dog_classification.ipynb`) in Google Colab.
 3. Follow the steps outlined in the notebook to download the dataset and train the model.
@@ -95,22 +95,32 @@ The goal of this project is to create a model capable of distinguishing between 
 The images are normalized to ensure pixel values are scaled to the range [0, 1]:
 ```python
 # Normalize
-train_ds = train_ds.map(lambda x, y: (x / 255.0, y))
-validation_ds = validation_ds.map(lambda x, y: (x / 255.0, y))
+def process(image, label):
+  image = tf.cast(image/255, tf.float32)
+  return image, label
+
+train_ds = train_ds.map(process)
+validation_ds = validation_ds.map(process)
 ```
 
 ### Image Generators
 The data is divided into batches for efficient training using Keras image generators:
 ```python
+# generators
 train_ds = keras.utils.image_dataset_from_directory(
-    directory='/content/train',
-    image_size=(256, 256),
-    batch_size=32
+    directory = '/content/train',
+    labels = 'inferred',
+    label_mode = 'int',  # cats will be assigned 0 and dogs 1
+    batch_size = 32,
+    image_size = (256, 256)  # as model expect the images to be of same size
 )
+
 validation_ds = keras.utils.image_dataset_from_directory(
-    directory='/content/test',
-    image_size=(256, 256),
-    batch_size=32
+    directory = '/content/test',
+    labels = 'inferred',
+    label_mode = 'int',  # cats will be assigned 0 and dogs 1
+    batch_size = 32,
+    image_size = (256, 256)  # as model expect the images to be of same size
 )
 ```
 
@@ -134,5 +144,3 @@ Feel free to explore the project and contribute! If you encounter any issues, pl
 
 ### License
 This project is licensed under the MIT License.
-
-
